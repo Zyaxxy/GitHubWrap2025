@@ -69,13 +69,13 @@ export const SlideDeck: React.FC<{ data: GitHubStats }> = ({ data }) => {
       </div>
 
       {/* Slide Container */}
-      <AnimatePresence mode="wait">
+      <AnimatePresence>
         <motion.div
           key={currentIndex}
           className="w-full h-full"
           initial={{ opacity: 0, scale: 1.1, filter: 'blur(10px)' }}
           animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-          exit={{ opacity: 0, x: -50, filter: 'blur(5px)' }}
+          exit={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
           transition={{ duration: 0.4, ease: "easeOut" }}
           onClick={handleNext}
         >
@@ -84,10 +84,20 @@ export const SlideDeck: React.FC<{ data: GitHubStats }> = ({ data }) => {
       </AnimatePresence>
 
       {/* Controls */}
-      <div className="absolute bottom-4 left-0 right-0 flex justify-between px-8 z-50 text-xs font-mono text-gray-500 uppercase">
-        <button onClick={(e) => { e.stopPropagation(); handlePrev(); }} className="hover:text-white">Back</button>
-        <span>{currentIndex + 1} / {SLIDES.length}</span>
-        <button onClick={(e) => { e.stopPropagation(); handleNext(); }} className="hover:text-white">Next</button>
+      <div className="absolute bottom-6 left-0 right-0 flex justify-between items-center px-8 md:px-12 z-50 font-mono uppercase pointer-events-none">
+        <button
+          onClick={(e) => { e.stopPropagation(); handlePrev(); }}
+          className="pointer-events-auto text-xl md:text-3xl font-bold text-gray-500 hover:text-white transition-colors p-4"
+        >
+          Back
+        </button>
+        <span className="text-sm md:text-base text-gray-600">{currentIndex + 1} / {SLIDES.length}</span>
+        <button
+          onClick={(e) => { e.stopPropagation(); handleNext(); }}
+          className="pointer-events-auto text-xl md:text-3xl font-bold text-gray-500 hover:text-white transition-colors p-4"
+        >
+          Next
+        </button>
       </div>
     </div>
   );
