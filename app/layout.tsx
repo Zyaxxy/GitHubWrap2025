@@ -17,6 +17,10 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata: Metadata = {
   title: "GitWrapped 2025: The Roast",
+  description: "GitWrapped 2025: The Roast",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
