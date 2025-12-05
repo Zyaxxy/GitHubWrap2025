@@ -30,9 +30,9 @@ export async function fetchGitHubData(username: string): Promise<GitHubStats> {
     const reposRes = await fetch(`https://api.github.com/users/${username}/repos?sort=pushed&per_page=100`, { headers });
     const repos = reposRes.ok ? await reposRes.json() : [];
 
-    // 3. Fetch Events (Up to 3 pages / 300 events to get better activity stats)
+    // 3. Fetch Events (Up to 10 pages / 1000 events to get better activity stats)
     // The Events API is limited to the last 90 days.
-    const eventPages = [1, 2, 3];
+    const eventPages = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     const eventsPromises = eventPages.map(page =>
       fetch(`https://api.github.com/users/${username}/events?per_page=100&page=${page}`, { headers })
         .then(res => res.ok ? res.json() : [])

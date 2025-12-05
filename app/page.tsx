@@ -74,7 +74,7 @@ function App() {
 
 
         <div className="relative z-10 max-w-2xl w-full flex flex-col items-center">
-          <div className="mb-8 border-4 border-white p-6 shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] bg-[#121212] transform -rotate-2">
+          <div className="mb-8 border-4 border-white p-6 shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] bg-mixtape-surface transform -rotate-2">
             <Github size={48} className="mb-4 text-white" />
             <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none mb-2">
               GitWrapped<br /><span className="text-accent-green">2025</span>
