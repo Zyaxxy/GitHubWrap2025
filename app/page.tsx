@@ -7,7 +7,7 @@ import { GitHubStats } from './types';
 import { Github, Loader2, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-import LiquidEther from '../components/LiquidEther';
+import LiquidEther from './components/LiquidEther';
 
 function App() {
   const [username, setUsername] = useState('');

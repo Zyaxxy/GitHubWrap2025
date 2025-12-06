@@ -2,13 +2,14 @@
 import React, { useMemo } from 'react';
 import { SlideProps } from '../../types';
 import { Sticker } from '../ui/Sticker';
+import CountUp from '../CountUp';
 
 const INSULTS = [
   {
     min: 0,
     max: 20,
     messages: [
-      "You opened VS Code exactly once and immediately Alt+F4’d like it owed you money.",
+      "You opened VS Code exactly once and immediately Alt+F4'd like it owed you money.",
       "Your GitHub is so dead it qualifies for carbon dating.",
       "Your laptop filed a missing persons report on you."
     ]
@@ -17,8 +18,8 @@ const INSULTS = [
     min: 20,
     max: 50,
     messages: [
-      "You’ve written more “hello world” than actual production code.",
-      "Congratulations, you’re now slower than a junior who started yesterday.",
+      "You've written more 'hello world' than actual production code.",
+      "Congratulations, you're now slower than a junior who started yesterday.",
       "Your entire contribution could be replaced by a 2012 CodePen."
     ]
   },
@@ -26,18 +27,18 @@ const INSULTS = [
     min: 50,
     max: 100,
     messages: [
-      "You’re not a developer, you’re a professional tab hoarder.",
+      "You're not a developer, you're a professional tab hoarder.",
       "Half your hours were spent googling how to exit Vim.",
-      "You’ve spent more time picking a font than shipping anything."
+      "You've spent more time picking a font than shipping anything."
     ]
   },
   {
     min: 100,
     max: 150,
     messages: [
-      "You’re the reason seniors drink at 10 a.m.",
+      "You're the reason seniors drink at 10 a.m.",
       "Your pull requests come with a trigger warning.",
-      "You’re not learning you’re just accumulating shame at 0.3× speed."
+      "You're not learning, you're just accumulating shame at 0.3x speed."
     ]
   },
   {
@@ -45,39 +46,39 @@ const INSULTS = [
     max: 200,
     messages: [
       "Your code smells like week-old ramen and despair.",
-      "You’ve personally delayed the team’s velocity by a full sprint.",
+      "You've personally delayed the team's velocity by a full sprint.",
       "Senior dev saw your branch and instinctively reached for the flask."
     ]
   },
+  // HIGH HOURS: "You could have X, BUT you did Y"
   {
     min: 200,
     max: 250,
     messages: [
-      "You’re a walking CVE waiting to be discovered.",
-      "Your ‘refactor’ created three new bugs for every one you allegedly fixed.",
-      "You’re the reason we can’t have nice things, like working deploys."
+      "You could have written a 50,000-word novel, but instead you wrote 50,000 lines of spaghetti code that doesn't compile.",
+      "You could have become a certified Sommelier, but you only developed a palette for deprecated dependencies.",
+      "You could have learned to solve a Rubik's cube in 15 seconds, but you still can't center a div."
     ]
   },
   {
     min: 250,
     max: 300,
     messages: [
-      "300 hours and your biggest flex is still ‘I can read a stack trace now.’",
-      "You’ve renamed more variables than you’ve written working features.",
-      "You’re not mid-level—you’re mid-crisis with extra copium."
+      "You could have built a livable Tiny House from scratch, but you can't even build a stable Docker container.",
+      "You could have re-watched The Office four times, but you just spent that time watching a loading spinner.",
+      "You could have backpacked across Europe, but you're still stuck on the same merge conflict you started in March."
     ]
   },
   {
     min: 300,
     max: Infinity,
     messages: [
-      "Three hundred hours in and production still flinches when you push.",
-      "You’ve achieved the rare rank of ‘negative impact per hour.’",
-      "Welcome to the craft. Your imposter syndrome is the only accurate thing about you."
+      "You could have raised a human child, but instead you gave birth to a repo that everyone refuses to maintain.",
+      "You could have renovated an entire kitchen, but your architecture still leaks memory like a broken pipe.",
+      "You could have become a semi-pro chess player, but you're still getting checkmated by a missing semicolon."
     ]
   }
 ];
-
 export const IntroSlide: React.FC<SlideProps> = ({ data }) => {
   const insult = useMemo(() => {
     const category = INSULTS.find(range => data.totalHours >= range.min && data.totalHours < range.max) || INSULTS[INSULTS.length - 1];
@@ -97,7 +98,15 @@ export const IntroSlide: React.FC<SlideProps> = ({ data }) => {
       </h1>
       <Sticker className="max-w-md transform -rotate-2">
         <p className="font-mono text-lg md:text-xl">
-          You spent <span className="text-accent-rose font-bold">{data.totalHours} hours</span> coding this year.
+          You spent <span className="text-accent-rose font-bold">
+            <CountUp
+              from={0}
+              to={data.totalHours}
+              separator=","
+              direction="up"
+              duration={1}
+              className="count-up-text"
+            /> hours</span> coding this year.
           <br className="my-2" />
           {insult}
         </p>
