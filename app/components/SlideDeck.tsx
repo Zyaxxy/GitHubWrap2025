@@ -7,7 +7,7 @@ import { NoiseOverlay } from './ui/NoiseOverlay';
 import { IntroSlide } from './slides/IntroSlide';
 import { RhythmSlide } from './slides/RhythmSlide';
 import { LanguageSlide } from './slides/LanguageSlide';
-import { MonologueSlide } from './slides/MonologueSlide';
+import { DaysCodedSlide } from './slides/DaysCodedSlide';
 import { TrashSlide } from './slides/TrashSlide';
 import { SummarySlide } from './slides/SummarySlide';
 
@@ -17,7 +17,7 @@ const SLIDES: { id: SlideId, component: React.FC<SlideProps> }[] = [
   { id: 'intro', component: IntroSlide },
   { id: 'rhythm', component: RhythmSlide },
   { id: 'languages', component: LanguageSlide },
-  { id: 'monologue', component: MonologueSlide },
+  { id: 'days-coded', component: DaysCodedSlide },
   { id: 'trash', component: TrashSlide },
   { id: 'summary', component: SummarySlide },
 ];

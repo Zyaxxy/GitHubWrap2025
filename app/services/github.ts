@@ -91,6 +91,7 @@ export async function fetchGitHubData(username: string): Promise<GitHubStats> {
     // Analyze Events
     let totalCommits = 0;
     const commitHours: number[] = [];
+    const commitDates: string[] = [];
     const commitMessages: string[] = [];
     let fridayDeploys = 0;
     let weekendCommits = 0; // NEW Metric
@@ -99,9 +100,14 @@ export async function fetchGitHubData(username: string): Promise<GitHubStats> {
       events.forEach((event: any) => {
         const date = new Date(event.created_at);
 
+        if (['PushEvent', 'PullRequestEvent', 'CreateEvent', 'IssuesEvent', 'PullRequestReviewEvent'].includes(event.type)) {
+          commitDates.push(date.toISOString());
+          commitHours.push(date.getHours());
+        }
+
         if (event.type === 'PushEvent') {
           // Commit times (Local time of the user's browser processing this)
-          commitHours.push(date.getHours());
+          // commitHours already pushed above
 
           // Friday check (Friday is day 5)
           if (date.getDay() === 5 && date.getHours() >= 16) {
@@ -142,6 +148,18 @@ export async function fetchGitHubData(username: string): Promise<GitHubStats> {
     // Fallback if user has no recent public events but has repos
     if (estimatedCommits < 50 && user.public_repos > 0) {
       estimatedCommits = Math.max(estimatedCommits, user.public_repos * 10);
+    }
+
+    // Synthetic data if events are missing but we have estimated commits
+    if (commitDates.length === 0 && estimatedCommits > 0) {
+      const today = new Date();
+      // Generate some random dates over the last year
+      const count = Math.min(estimatedCommits, 150);
+      for (let i = 0; i < count; i++) {
+        const d = new Date(today.getTime() - Math.random() * 365 * 24 * 60 * 60 * 1000);
+        commitDates.push(d.toISOString());
+        commitHours.push(Math.floor(Math.random() * 24));
+      }
     }
 
     const estimatedHours = Math.floor(estimatedCommits * 0.75);
@@ -230,6 +248,7 @@ export async function fetchGitHubData(username: string): Promise<GitHubStats> {
       forcePushes,
       fridayDeploys,
       heaviestRepo: heaviestRepo.name,
+      commitDates,
       archetype
     };
 
@@ -253,6 +272,7 @@ export async function fetchGitHubData(username: string): Promise<GitHubStats> {
       forcePushes: 99,
       fridayDeploys: 99,
       heaviestRepo: "github_api",
+      commitDates: [],
       archetype: { name: "The Ghost", description: "You code so fast the API can't keep up.", quote: "403 Forbidden." }
     };
   }

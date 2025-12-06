@@ -3,6 +3,7 @@ import React, { useMemo } from 'react';
 import { SlideProps } from '../../types';
 import { Sticker } from '../ui/Sticker';
 import CountUp from '../CountUp';
+import LetterGlitch from '../LetterGlitch';
 
 const INSULTS = [
   {
@@ -81,24 +82,47 @@ const INSULTS = [
 ];
 export const IntroSlide: React.FC<SlideProps> = ({ data }) => {
   const insult = useMemo(() => {
-    const category = INSULTS.find(range => data.totalHours >= range.min && data.totalHours < range.max) || INSULTS[INSULTS.length - 1];
+    const category = INSULTS.find(
+      (range) => data.totalHours >= range.min && data.totalHours < range.max
+    ) || INSULTS[INSULTS.length - 1];
+
     return category.messages[Math.floor(Math.random() * category.messages.length)];
   }, [data.totalHours]);
 
   return (
-    <div className="flex flex-col items-center justify-center h-full text-center relative z-10 p-4">
-      <div className="mb-8 relative">
-        <img src={data.avatarUrl} alt="avatar" className="w-32 h-32 rounded-full border-4 border-accent-green z-10 relative" />
-        <div className="absolute -top-2 -right-2 bg-white text-black font-bold px-2 py-1 transform rotate-12 border-2 border-black">
+    <div className="relative flex flex-col items-center justify-center h-full w-full overflow-hidden bg-black text-white p-6">
+      {/* Glow Background */}
+      <div className="absolute inset-0 opacity-40 bg-linear-gradient-to-br from-rose-500/20 via-purple-500/20 to-blue-500/20 blur-3xl" />
+
+      <LetterGlitch
+        glitchSpeed={50}
+        centerVignette={true}
+        outerVignette={false}
+        smooth={true}
+      />
+
+      {/* Avatar */}
+      <div className="relative mb-8">
+        <img
+          src={data.avatarUrl}
+          alt="avatar"
+          className="w-36 h-36 rounded-full border-4 border-white shadow-xl shadow-rose-500/30"
+        />
+        <div className="absolute -top-2 -right-2 bg-white text-black font-black px-3 py-1 text-sm rotate-6 border-2 border-black">
           2025
         </div>
       </div>
-      <h1 className="text-6xl md:text-8xl font-black mb-6 tracking-tighter uppercase leading-[0.8]">
+
+      {/* Title */}
+      <h1 className="text-7xl md:text-9xl font-black uppercase tracking-tighter leading-[0.8] drop-shadow-[0_0_20px_rgba(255,255,255,0.15)]">
         The<br />Roast
       </h1>
-      <Sticker className="max-w-md transform -rotate-2">
-        <p className="font-mono text-lg md:text-xl">
-          You spent <span className="text-accent-rose font-bold">
+
+      {/* Card */}
+      <Sticker className="max-w-xl mt-6 rotate-1 shadow-2xl shadow-black/40">
+        <p className="font-mono text-lg md:text-xl leading-relaxed">
+          You spent
+          <span className="text-accent-rose font-bold">{' '}
             <CountUp
               from={0}
               to={data.totalHours}
@@ -106,11 +130,14 @@ export const IntroSlide: React.FC<SlideProps> = ({ data }) => {
               direction="up"
               duration={1}
               className="count-up-text"
-            /> hours</span> coding this year.
-          <br className="my-2" />
+            />{' '}
+            hours
+          </span>{' '}
+          coding this year.
+          <br />
           {insult}
         </p>
       </Sticker>
     </div>
   );
-};
+}

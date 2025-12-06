@@ -14,6 +14,7 @@ export interface GitHubStats {
   forcePushes: number;
   fridayDeploys: number;
   heaviestRepo: string;
+  commitDates: string[];
   archetype: Archetype;
 }
 
@@ -23,11 +24,11 @@ export interface Archetype {
   quote: string;
 }
 
-export type SlideId = 
+export type SlideId =
   | 'intro'
   | 'rhythm'
   | 'languages'
-  | 'monologue'
+  | 'days-coded'
   | 'trash'
   | 'social'
   | 'danger'
