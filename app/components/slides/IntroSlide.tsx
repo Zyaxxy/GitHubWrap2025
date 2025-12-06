@@ -94,50 +94,55 @@ export const IntroSlide: React.FC<SlideProps> = ({ data }) => {
       {/* Glow Background */}
       <div className="absolute inset-0 opacity-40 bg-linear-gradient-to-br from-rose-500/20 via-purple-500/20 to-blue-500/20 blur-3xl" />
 
-      <LetterGlitch
-        glitchSpeed={50}
-        centerVignette={true}
-        outerVignette={false}
-        smooth={true}
-      />
-
-      {/* Avatar */}
-      <div className="relative mb-8">
-        <img
-          src={data.avatarUrl}
-          alt="avatar"
-          className="w-36 h-36 rounded-full border-4 border-white shadow-xl shadow-rose-500/30"
+      <div className="absolute inset-0 z-0">
+        <LetterGlitch
+          glitchSpeed={50}
+          centerVignette={true}
+          outerVignette={false}
+          smooth={true}
         />
-        <div className="absolute -top-2 -right-2 bg-white text-black font-black px-3 py-1 text-sm rotate-6 border-2 border-black">
-          2025
-        </div>
       </div>
 
-      {/* Title */}
-      <h1 className="text-7xl md:text-9xl font-black uppercase tracking-tighter leading-[0.8] drop-shadow-[0_0_20px_rgba(255,255,255,0.15)]">
-        The<br />Roast
-      </h1>
+      <div className="relative z-10 flex flex-col items-center justify-center w-full h-full">
 
-      {/* Card */}
-      <Sticker className="max-w-xl mt-6 rotate-1 shadow-2xl shadow-black/40">
-        <p className="font-mono text-lg md:text-xl leading-relaxed">
-          You spent
-          <span className="text-accent-rose font-bold">{' '}
-            <CountUp
-              from={0}
-              to={data.totalHours}
-              separator=","
-              direction="up"
-              duration={1}
-              className="count-up-text"
-            />{' '}
-            hours
-          </span>{' '}
-          coding this year.
-          <br />
-          {insult}
-        </p>
-      </Sticker>
+        {/* Avatar */}
+        <div className="relative mb-8">
+          <img
+            src={data.avatarUrl}
+            alt="avatar"
+            className="w-36 h-36 rounded-full border-4 border-white shadow-xl shadow-rose-500/30"
+          />
+          <div className="absolute -top-2 -right-2 bg-white text-black font-black px-3 py-1 text-sm rotate-6 border-2 border-black">
+            2025
+          </div>
+        </div>
+
+        {/* Title */}
+        <h1 className="text-7xl md:text-9xl font-black uppercase tracking-tighter leading-[0.8] drop-shadow-[0_0_20px_rgba(255,255,255,0.15)]">
+          The<br />Roast
+        </h1>
+
+        {/* Card */}
+        <Sticker className="max-w-xl mt-6 rotate-1 shadow-2xl shadow-black/40">
+          <p className="font-mono text-lg md:text-xl leading-relaxed">
+            You spent
+            <span className="text-accent-rose font-bold">{' '}
+              <CountUp
+                from={0}
+                to={data.totalHours}
+                separator=","
+                direction="up"
+                duration={1}
+                className="count-up-text"
+              />{' '}
+              hours
+            </span>{' '}
+            coding this year.
+            <br />
+            {insult}
+          </p>
+        </Sticker>
+      </div>
     </div>
   );
 }
