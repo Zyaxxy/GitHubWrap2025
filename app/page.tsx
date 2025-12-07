@@ -6,6 +6,8 @@ import { fetchGitHubData } from './services/github';
 import { GitHubStats } from './types';
 import { Github, Loader2, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useSession } from 'next-auth/react';
+import LoginButton from './components/LoginButton';
 
 import LiquidEther from './components/LiquidEther';
 
@@ -13,13 +15,23 @@ function App() {
   const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<GitHubStats | null>(null);
+  const { data: session } = useSession();
+
+  // Auto-fill username if logged in
+  React.useEffect(() => {
+    if ((session?.user as any)?.username) {
+      setUsername((session?.user as any).username);
+    }
+  }, [session]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!username) return;
 
     setLoading(true);
-    const stats = await fetchGitHubData(username);
+    // @ts-ignore
+    const token = session?.accessToken;
+    const stats = await fetchGitHubData(username, token);
     setData(stats);
     setLoading(false);
   };
@@ -80,6 +92,16 @@ function App() {
               GitWrapped<br /><span className="text-accent-green">2025</span>
             </h1>
             <p className="font-mono text-lg text-gray-300">The Roast Edition</p>
+          </div>
+
+          <div className="w-full flex justify-center mb-8">
+            <LoginButton />
+          </div>
+
+          <div className="w-full flex items-center justify-center gap-4 mb-8">
+            <div className="h-px bg-white/20 w-1/4"></div>
+            <span className="font-mono text-zinc-500 text-sm">OR PUBLIC SEARCH</span>
+            <div className="h-px bg-white/20 w-1/4"></div>
           </div>
 
           <form onSubmit={handleSubmit} className="w-full max-w-md flex flex-col gap-4 relative">

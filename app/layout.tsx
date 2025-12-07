@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Analytics } from '@vercel/analytics/next';
 import { DM_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
+import { Providers } from "./components/Providers";
 
 const dmMono = DM_Mono({
   variable: "--font-dm-mono",
@@ -34,7 +35,9 @@ export default function RootLayout({
       <body
         className={`${spaceGrotesk.variable} ${dmMono.variable} antialiased`}
       >
-        {children}
+        <Providers>
+          {children}
+        </Providers>
         <Analytics />
       </body>
     </html>

@@ -33,13 +33,18 @@ const ARCHETYPES = [
   { name: "The Commit Bot", description: "You have a green square for every day of the year. Are you human?", quote: "Consistency is key." }
 ];
 
-export async function fetchGitHubData(username: string): Promise<GitHubStats> {
+export async function fetchGitHubData(username: string, token?: string): Promise<GitHubStats> {
   try {
-    const headers = {
+    const headers: HeadersInit = {
       'Accept': 'application/vnd.github.v3+json',
     };
 
+    if (token) {
+      headers['Authorization'] = `token ${token}`;
+    }
+
     // 1. Fetch Basic Profile
+    // If token is provided, verify we can access this user or it's 'me'
     const userRes = await fetch(`https://api.github.com/users/${username}`, { headers });
     if (!userRes.ok) {
       if (userRes.status === 404) throw new Error('User not found');
@@ -48,12 +53,29 @@ export async function fetchGitHubData(username: string): Promise<GitHubStats> {
     }
     const user = await userRes.json();
 
-    // 2. Fetch Repos (Up to 100 to get better language distribution)
-    const reposRes = await fetch(`https://api.github.com/users/${username}/repos?sort=pushed&per_page=100`, { headers });
+    // 2. Fetch Repos (Enhanced for Auth)
+    // If authenticated, we try to fetch all repos (including private if scope allows and user matches)
+    let reposUrl = `https://api.github.com/users/${username}/repos?sort=pushed&per_page=100`;
+    if (token) {
+      // use /user/repos to get private ones if we are the authenticated user
+      // We need to check if 'username' matches the token's user, or just try /user/repos
+      // For simplicity, let's trust the flow. If we have a token, we likely want "my" data.
+      // But the function arg is 'username'.
+      // If username equals the authenticated user's login, use /user/repos.
+      const meRes = await fetch('https://api.github.com/user', { headers });
+      if (meRes.ok) {
+        const me = await meRes.json();
+        if (me.login.toLowerCase() === username.toLowerCase()) {
+          reposUrl = `https://api.github.com/user/repos?per_page=100&type=all&sort=pushed`;
+        }
+      }
+    }
+
+    const reposRes = await fetch(reposUrl, { headers });
     const repos = reposRes.ok ? await reposRes.json() : [];
 
-    // 3. Fetch Events (Up to 10 pages / 1000 events to get better activity stats)
-    // The Events API is limited to the last 90 days.
+    // 3. Fetch Events
+    // Auth token increases rate limit and visibility of private events
     const eventPages = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     const eventsPromises = eventPages.map(page =>
       fetch(`https://api.github.com/users/${username}/events?per_page=100&page=${page}`, { headers })
