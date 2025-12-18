@@ -10,7 +10,7 @@ export default function LoginButton() {
         return (
             <div className="flex flex-col items-center gap-2">
                 <p className="text-sm text-green-400/80 font-mono">
-                    Logged in as {session.user.name || session.user.email}
+                    Logged in as {session.user.username || session.user.name || session.user.email}
                 </p>
                 <button
                     onClick={() => signOut()}
@@ -18,7 +18,7 @@ export default function LoginButton() {
                 >
                     Sign out
                 </button>
-            </div>
+            </div >
         );
     }
 

@@ -19,8 +19,8 @@ function App() {
 
   // Auto-fill username if logged in
   React.useEffect(() => {
-    if ((session?.user as any)?.username) {
-      setUsername((session?.user as any).username);
+    if (session?.user?.username) {
+      setUsername(session.user.username);
     }
   }, [session]);
 
@@ -29,7 +29,6 @@ function App() {
     if (!username) return;
 
     setLoading(true);
-    // @ts-ignore
     const token = session?.accessToken;
     const stats = await fetchGitHubData(username, token);
     setData(stats);

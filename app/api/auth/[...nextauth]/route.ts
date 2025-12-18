@@ -14,14 +14,20 @@ export const authOptions = {
         }),
     ],
     callbacks: {
-        async jwt({ token, account }: any) {
+        async jwt({ token, account, profile }: any) {
             if (account) {
                 token.accessToken = account.access_token
+            }
+            if (profile) {
+                token.username = profile.login
             }
             return token
         },
         async session({ session, token }: any) {
             session.accessToken = token.accessToken
+            if (session.user) {
+                session.user.username = token.username
+            }
             return session
         },
     },
