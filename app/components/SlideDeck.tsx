@@ -10,6 +10,8 @@ import { LanguageSlide } from './slides/LanguageSlide';
 import { DaysCodedSlide } from './slides/DaysCodedSlide';
 import { TrashSlide } from './slides/TrashSlide';
 import { SummarySlide } from './slides/SummarySlide';
+import { FridaySlide } from './slides/FridaySlide';
+import { DangerSlide } from './slides/DangerSlide';
 
 // --- MAIN DECK ---
 
@@ -18,6 +20,8 @@ const SLIDES: { id: SlideId, component: React.FC<SlideProps> }[] = [
   { id: 'rhythm', component: RhythmSlide },
   { id: 'languages', component: LanguageSlide },
   { id: 'days-coded', component: DaysCodedSlide },
+  { id: 'friday', component: FridaySlide },
+  { id: 'danger', component: DangerSlide },
   { id: 'trash', component: TrashSlide },
   { id: 'summary', component: SummarySlide },
 ];
