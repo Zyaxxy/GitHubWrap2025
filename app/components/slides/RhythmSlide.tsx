@@ -1,34 +1,72 @@
 
 import React from 'react';
-import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, Radar } from 'recharts';
-import { SlideProps, COLORS } from '../../types';
+import { motion } from 'framer-motion';
+import { SlideProps } from '../../types';
 
 export const RhythmSlide: React.FC<SlideProps> = ({ data }) => {
-  // Generate mock radar data centered around peak time
+  // Generate mock frequency data based on peak time
   const hour = parseInt(data.peakTime.split(':')[0]);
-  const radarData = [
-    { subject: 'Morning', A: hour >= 5 && hour < 12 ? 100 : 20 },
-    { subject: 'Day', A: hour >= 12 && hour < 18 ? 100 : 40 },
-    { subject: 'Evening', A: hour >= 18 && hour < 23 ? 100 : 50 },
-    { subject: 'Night', A: hour >= 23 || hour < 5 ? 100 : 80 },
+
+  // Create equalizer bars
+  const bars = [
+    { label: '6AM', height: hour >= 5 && hour < 12 ? 90 : 30, color: '#FFB5B5' }, // Morning
+    { label: '12PM', height: hour >= 12 && hour < 18 ? 100 : 40, color: '#2E77D0' }, // Day
+    { label: '6PM', height: hour >= 18 && hour < 23 ? 95 : 50, color: '#1DB954' }, // Evening
+    { label: '12AM', height: hour >= 23 || hour < 5 ? 100 : 60, color: '#EE3124' }, // Night
   ];
 
   return (
-    <div className="flex flex-col items-center justify-center h-full relative z-10 p-4">
-      <h2 className="text-4xl font-bold mb-2 uppercase tracking-tight text-accent-green">Circadian Rhythm</h2>
-      <p className="font-mono mb-8 text-center max-w-lg">
-        Your brain peaks at <span className="border-b-2 border-white">{data.peakTime}</span>.
-        <br/>Diagnosis: {data.peakTimeCategory}.
-      </p>
-      
-      <div className="w-full h-64 md:h-80 max-w-md bg-mixtape-surface border-4 border-white sticker-shadow p-2">
-        <ResponsiveContainer width="100%" height="100%">
-          <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
-            <PolarGrid stroke="#333" />
-            <PolarAngleAxis dataKey="subject" tick={{ fill: 'white', fontFamily: 'DM Mono', fontSize: 12 }} />
-            <Radar name="Activity" dataKey="A" stroke={COLORS.green} fill={COLORS.green} fillOpacity={0.6} />
-          </RadarChart>
-        </ResponsiveContainer>
+    <div className="flex flex-col items-center justify-center h-full relative z-10 p-4 bg-black overflow-hidden">
+      {/* Background Grid */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-size-[40px_40px] pointer-events-none" />
+
+      <motion.div
+        initial={{ y: -50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        className="text-center mb-12 relative z-10"
+      >
+        <h2 className="text-6xl md:text-8xl font-black mb-2 uppercase tracking-tighter text-transparent bg-clip-text bg-linear-to-r from-accent-green via-white to-accent-green animate-pulse">
+          Rhythm
+        </h2>
+        <p className="font-mono text-xl md:text-2xl text-white">
+          Your peak flow is at <span className="border-b-4 border-accent-rose text-accent-rose font-bold">{data.peakTime}</span>
+        </p>
+        <div className="mt-2 text-sm font-mono text-gray-400 bg-white/10 inline-block px-3 py-1 rounded-full border border-white/20">
+          Dx: {data.peakTimeCategory}
+        </div>
+      </motion.div>
+
+      {/* Equalizer Visualization */}
+      <div className="flex items-end justify-center gap-4 h-64 w-full max-w-3xl px-8 relative z-10">
+        {bars.map((bar, index) => (
+          <div key={index} className="flex flex-col items-center gap-4 flex-1 h-full justify-end group">
+            {/* Bar */}
+            <motion.div
+              initial={{ height: "0%" }}
+              animate={{ height: [`${bar.height}%`, `${bar.height * 0.8}%`, `${bar.height}%`] }}
+              transition={{
+                duration: 0.8,
+                repeat: Infinity,
+                repeatType: "reverse",
+                delay: index * 0.1,
+                ease: "easeIn"
+              }}
+              className="w-full rounded-sm relative shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:brightness-125 transition-all cursor-pointer"
+              style={{ backgroundColor: bar.color }}
+            >
+              {/* Glitch Overlay on Bar */}
+              <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 animate-pulse" />
+            </motion.div>
+
+            {/* Label */}
+            <span className="font-mono font-bold text-lg md:text-xl tracking-widest">{bar.label}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Decorative Bottom Text */}
+      <div className="absolute bottom-12 text-center font-mono text-xs text-gray-600 uppercase tracking-widest">
+        Audio Frequency Analysis // 2025
       </div>
     </div>
   );

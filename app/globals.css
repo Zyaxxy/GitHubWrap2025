@@ -119,6 +119,45 @@ body {
   }
 }
 
+/* --- FUNKY ANIMATIONS --- */
+
+@keyframes glitch-skew {
+  0% { transform: skew(0deg); }
+  20% { transform: skew(-2deg); }
+  40% { transform: skew(2deg); }
+  60% { transform: skew(-1deg); }
+  80% { transform: skew(1deg); }
+  100% { transform: skew(0deg); }
+}
+
+.animate-glitch {
+  animation: glitch-skew 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
+  20%, 40%, 60%, 80% { transform: translateX(2px); }
+}
+
+.animate-shake {
+  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes pulse-neon {
+  0%, 100% {
+    box-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #ff00de, 0 0 20px #ff00de, 0 0 35px #ff00de;
+  }
+  50% {
+    box-shadow: 0 0 2px #fff, 0 0 5px #fff, 0 0 7px #ff00de, 0 0 10px #ff00de, 0 0 17px #ff00de;
+  }
+}
+
+.neon-border {
+  border: 2px solid #fff;
+  animation: pulse-neon 1.5s infinite alternate;
+}
+
 .marquee-container {
   overflow: hidden;
   white-space: nowrap;

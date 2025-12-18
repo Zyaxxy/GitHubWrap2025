@@ -1,22 +1,23 @@
 import React, { useMemo } from 'react';
+import { motion } from 'framer-motion';
 import { SlideProps } from '../../types';
 import CountUp from '../CountUp';
+import { Sticker } from '../ui/Sticker';
 
 export const DaysCodedSlide: React.FC<SlideProps> = ({ data }) => {
   const stats = useMemo(() => {
+    // ... (logic remains same, just ensuring we have data)
     const dates = data.commitDates.map(d => new Date(d));
     if (dates.length === 0) return null;
 
-    // 1. Unique Days (Normalize to Midnight)
     const uniqueDays = new Set<string>();
-    const dayMap: Record<string, number> = {}; // Count commits per day
+    const dayMap: Record<string, number> = {};
     let weekendCommits = 0;
 
     dates.forEach(date => {
-      const dateStr = date.toDateString(); // "Fri Apr 10 2025"
+      const dateStr = date.toDateString();
       uniqueDays.add(dateStr);
       dayMap[dateStr] = (dayMap[dateStr] || 0) + 1;
-
       const day = date.getDay();
       if (day === 0 || day === 6) weekendCommits++;
     });
@@ -24,7 +25,7 @@ export const DaysCodedSlide: React.FC<SlideProps> = ({ data }) => {
     const totalActiveDays = uniqueDays.size;
     const sortedDates = Array.from(uniqueDays).map(d => new Date(d)).sort((a, b) => a.getTime() - b.getTime());
 
-    // 2. Calculate Streaks
+    // Streak logic
     let maxStreak = 0;
     let currentStreak = 0;
     let tempStreak = 0;
@@ -34,29 +35,20 @@ export const DaysCodedSlide: React.FC<SlideProps> = ({ data }) => {
       if (prevDate) {
         const diffTime = Math.abs(date.getTime() - prevDate.getTime());
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-        if (diffDays === 1) {
-          tempStreak++;
-        } else {
-          tempStreak = 1;
-        }
+        if (diffDays === 1) tempStreak++;
+        else tempStreak = 1;
       } else {
         tempStreak = 1;
       }
-
       if (tempStreak > maxStreak) maxStreak = tempStreak;
       prevDate = date;
     });
 
-    // Check if streak is "current" (active today or yesterday)
     const lastCommitDate = sortedDates[sortedDates.length - 1];
     const today = new Date();
     const diffToToday = Math.ceil(Math.abs(today.getTime() - lastCommitDate.getTime()) / (1000 * 60 * 60 * 24));
-
-    // If last commit was > 2 days ago, current streak is 0
     currentStreak = diffToToday <= 2 ? tempStreak : 0;
 
-    // 3. Determine Persona
     const weekendRatio = weekendCommits / data.commitDates.length;
     let persona = "The Hobbyist";
     let roast = "You code when you feel like it. Which isn't often.";
@@ -75,83 +67,64 @@ export const DaysCodedSlide: React.FC<SlideProps> = ({ data }) => {
       roast = `Riding a ${currentStreak}-day streak! Don't blow it now.`;
     }
 
-    return {
-      totalActiveDays,
-      maxStreak,
-      currentStreak,
-      persona,
-      roast,
-      firstDate: sortedDates[0],
-      lastDate: sortedDates[sortedDates.length - 1]
-    };
+    return { totalActiveDays, maxStreak, currentStreak, persona, roast };
   }, [data.commitDates]);
 
   if (!stats) return <div className="bg-black text-white h-full flex items-center justify-center">No Data</div>;
 
   return (
-    <div className="flex flex-col h-full w-full bg-[#F3F4F6] text-black relative overflow-hidden font-sans">
+    <div className="flex flex-col h-full w-full bg-linear-to-b from-gray-900 to-black text-white relative overflow-hidden font-sans p-6 items-center justify-center">
 
-      {/* Background Pattern: A subtle grid representing days */}
-      <div className="absolute inset-0 opacity-5"
-        style={{ backgroundImage: 'radial-gradient(circle, #000 1px, transparent 1px)', backgroundSize: '20px 20px' }}
-      />
+      {/* Background Heatmap Effect */}
+      <div className="absolute inset-0 grid grid-cols-12 gap-1 opacity-10 pointer-events-none transform -skew-y-12 scale-150">
+        {Array.from({ length: 144 }).map((_, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: Math.random() }}
+            transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
+            className={`w-full aspect-square ${Math.random() > 0.7 ? 'bg-accent-green' : 'bg-gray-800'} rounded-sm`}
+          />
+        ))}
+      </div>
 
-      <div className="z-10 flex flex-col h-full p-8 justify-between">
-
-        {/* Top Section: The Big Number */}
-        <div>
-          <h2 className="text-xl font-bold uppercase text-gray-500 tracking-wider">Active Days</h2>
-          <div className="flex items-baseline mt-2">
-            <span className="text-9xl font-black tracking-tighter text-[#FF4F00]">
-              <CountUp
-                from={0}
-                to={stats.totalActiveDays}
-                separator=","
-                direction="up"
-                duration={1}
-                className="count-up-text"
-              />
-            </span>
-            <span className="ml-4 text-2xl font-bold text-gray-400">
-              / 365
-            </span>
+      <motion.div
+        initial={{ y: 50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        className="z-10 w-full max-w-2xl"
+      >
+        <Sticker className="bg-mixtape-surface border-4 border-white shadow-[10px_10px_0px_0px_#1DB954] p-8 -rotate-1">
+          {/* Top Section */}
+          <div className="flex justify-between items-start mb-8 border-b-2 border-dashed border-gray-600 pb-6">
+            <div>
+              <h2 className="text-xl font-bold uppercase text-gray-400 tracking-wider mb-2">Active Days</h2>
+              <div className="flex items-baseline">
+                <span className="text-8xl md:text-9xl font-black tracking-tighter text-accent-green leading-none drop-shadow-[0_0_15px_rgba(29,185,84,0.5)]">
+                  <CountUp from={0} to={stats.totalActiveDays} duration={1.5} />
+                </span>
+                <span className="ml-4 text-3xl font-bold text-gray-500 transform -rotate-12"> / 365</span>
+              </div>
+            </div>
+            {/* Streak Badge */}
+            <div className="flex flex-col items-center animate-pulse">
+              <div className="text-5xl">🔥</div>
+              <div className="font-black text-accent-rose text-xl uppercase tracking-tighter">
+                {stats.maxStreak} Day Streak
+              </div>
+            </div>
           </div>
-        </div>
 
-        {/* Middle Section: The Streak Visual */}
-        <div className="flex flex-col items-center justify-center my-8">
-          <div className="relative w-full max-w-lg bg-white border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rotate-1">
-            <div className="flex justify-between items-center mb-4">
-              <span className="text-sm font-bold uppercase text-gray-400">Longest Streak</span>
-              <span className="text-4xl font-black">{stats.maxStreak} Days</span>
+          {/* Persona */}
+          <div className="text-center">
+            <div className="inline-block bg-white text-black font-black text-3xl uppercase px-4 py-2 transform -skew-x-12 mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)]">
+              {stats.persona}
             </div>
-
-            {/* Streak Bar Visualization */}
-            <div className="flex space-x-1 h-12 w-full">
-              {Array.from({ length: Math.min(20, stats.maxStreak + 5) }).map((_, i) => (
-                <div
-                  key={i}
-                  className={`flex-1 rounded-sm ${i < stats.maxStreak ? 'bg-[#FF4F00]' : 'bg-gray-200'}`}
-                />
-              ))}
-            </div>
-            <p className="text-xs text-right mt-2 font-mono text-gray-400">
-              Current Streak: {stats.currentStreak} days
+            <p className="text-xl font-mono text-gray-300 max-w-lg mx-auto leading-relaxed">
+              "{stats.roast}"
             </p>
           </div>
-        </div>
-
-        {/* Bottom Section: The Roast */}
-        <div className="text-center mb-12">
-          <h3 className="text-4xl font-black uppercase italic leading-none mb-2">
-            "{stats.persona}"
-          </h3>
-          <p className="text-xl font-medium text-gray-600 max-w-md ml-auto mr-auto">
-            {stats.roast}
-          </p>
-        </div>
-
-      </div>
+        </Sticker>
+      </motion.div>
     </div>
   );
 };

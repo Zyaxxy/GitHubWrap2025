@@ -1,5 +1,6 @@
 
 import React, { useMemo } from 'react';
+import { motion } from 'framer-motion';
 import { SlideProps } from '../../types';
 import { Sticker } from '../ui/Sticker';
 import CountUp from '../CountUp';
@@ -92,9 +93,9 @@ export const IntroSlide: React.FC<SlideProps> = ({ data }) => {
   return (
     <div className="relative flex flex-col items-center justify-center h-full w-full overflow-hidden bg-black text-white p-6">
       {/* Glow Background */}
-      <div className="absolute inset-0 opacity-40 bg-linear-gradient-to-br from-rose-500/20 via-purple-500/20 to-blue-500/20 blur-3xl" />
+      <div className="absolute inset-0 opacity-40 bg-linear-to-br from-rose-500/20 via-purple-500/20 to-blue-500/20 blur-3xl animate-pulse" />
 
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0 opacity-50">
         <LetterGlitch
           glitchSpeed={50}
           centerVignette={true}
@@ -106,42 +107,59 @@ export const IntroSlide: React.FC<SlideProps> = ({ data }) => {
       <div className="relative z-10 flex flex-col items-center justify-center w-full h-full">
 
         {/* Avatar */}
-        <div className="relative mb-8">
+        <motion.div
+          className="relative mb-8"
+          initial={{ scale: 0, rotate: -180 }}
+          animate={{ scale: 1, rotate: 0 }}
+          transition={{ type: "spring", bounce: 0.5, duration: 0.8 }}
+        >
           <img
             src={data.avatarUrl}
             alt="avatar"
-            className="w-36 h-36 rounded-full border-4 border-white shadow-xl shadow-rose-500/30"
+            className="w-40 h-40 rounded-full border-4 border-white shadow-[0_0_30px_rgba(255,255,255,0.5)]"
           />
-          <div className="absolute -top-2 -right-2 bg-white text-black font-black px-3 py-1 text-sm rotate-6 border-2 border-black">
+          <div className="absolute -top-4 -right-4 bg-accent-green text-black font-black px-4 py-2 text-lg rotate-12 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             2025
           </div>
-        </div>
+        </motion.div>
 
         {/* Title */}
-        <h1 className="text-7xl md:text-9xl font-black uppercase tracking-tighter leading-[0.8] drop-shadow-[0_0_20px_rgba(255,255,255,0.15)]">
-          The<br />Roast
-        </h1>
+        <div className="relative">
+          <h1 className="text-8xl md:text-[10rem] font-black uppercase tracking-tighter leading-[0.8] mix-blend-difference animate-glitch text-transparent bg-clip-text bg-linear-to-b from-white to-gray-400">
+            The<br />Roast
+          </h1>
+          <h1 className="absolute top-0 left-0 text-8xl md:text-[10rem] font-black uppercase tracking-tighter leading-[0.8] text-accent-rose opacity-50 blur-sm animate-shake z-[-1]">
+            The<br />Roast
+          </h1>
+        </div>
 
         {/* Card */}
-        <Sticker className="max-w-xl mt-6 rotate-1 shadow-2xl shadow-black/40">
-          <p className="font-mono text-lg md:text-xl leading-relaxed">
-            You spent
-            <span className="text-accent-rose font-bold">{' '}
-              <CountUp
-                from={0}
-                to={data.totalHours}
-                separator=","
-                direction="up"
-                duration={1}
-                className="count-up-text"
-              />{' '}
+        <motion.div
+          initial={{ y: 100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.5, type: "spring" }}
+          className="w-full max-w-xl mt-12"
+        >
+          <Sticker className="rotate-2 shadow-[8px_8px_0px_0px_#EE3124] border-2 border-white bg-mixtape-surface">
+            <p className="font-mono text-xl md:text-2xl leading-relaxed text-center">
+              You wasted
+              <span className="text-accent-rose font-bold mx-2 inline-block transform -skew-x-12 bg-white px-2">
+                <CountUp
+                  from={0}
+                  to={data.totalHours}
+                  separator=","
+                  direction="up"
+                  duration={1}
+                  className="text-black"
+                />
+              </span>
               hours
-            </span>{' '}
-            coding this year.
-            <br />
-            {insult}
-          </p>
-        </Sticker>
+              coding this year.
+              <br /><br />
+              <span className="text-gray-400 text-lg italic">"{insult}"</span>
+            </p>
+          </Sticker>
+        </motion.div>
       </div>
     </div>
   );
